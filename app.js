@@ -13,6 +13,14 @@ let budgetController = (() => {
         this.value = value;
     };
 
+    let calculateTotal = (type) => {
+        let sum = 0;
+        data.allItems[type].forEach((current, index, array) =>{
+            sum += current.value;
+        });
+        data.totals[type] = sum;
+    };
+
 
     let data = {
 
@@ -24,7 +32,9 @@ let budgetController = (() => {
         totals: {
             exp: 0,
             inc: 0,
-        }
+        },
+        budget: 0,
+        percentage: -1,
 
     };
 
@@ -32,7 +42,6 @@ let budgetController = (() => {
         addItem: (type, des, val) => {
             let newItem, ID,
                 dataType = data.allItems[type];
-
             if (dataType.length > 0) {
                 //finding array in object
                 //finding last index of that array 
@@ -43,7 +52,6 @@ let budgetController = (() => {
             } else {
                 ID = 0;
             }
-
             if (type === "exp") {
                 newItem = new Expense(ID, des, val);
             } else if (type === "inc") {
@@ -52,16 +60,39 @@ let budgetController = (() => {
             //[type] is in object bracket notation
             //selecting the array to push new item into 
             dataType.push(newItem);
-
-            //test(newItem);
-
             return newItem;
         },
-        // data: data,
 
-        // test: (obj) => {
-        //    console.log(data); 
-        // }
+        test: (obj) => {
+           console.log(data); 
+        },
+
+        calculateBudget: () => {
+
+            //calculate total income && expenses 
+            
+            calculateTotal("inc");
+            calculateTotal("exp");
+            //calculate budget 
+                //income - expenses 
+            data.budget = data.totals.inc - data.totals.exp;
+
+            //calc percentage of expenses 
+
+            if(data.totals.inc > 0){
+            data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+            }else{
+                data.percentage = -1;
+            }
+        },
+        getBudget: () => {
+            return {
+                budget: data.budget,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp,
+                percentage: data.percentage,
+            }
+        },
     }
 
 })();
@@ -152,36 +183,25 @@ let controller = ((budgetCtrl, uiCtrl) => {
     let updateBudget = () => {
 
         //calculate the bidget 
-
+        budgetCtrl.calculateBudget();
         //returns the budget && does nothing else 
-
-        //
-
-
+        let budget = budgetCtrl.getBudget();
+        //show on UI
+        console.log(budget);
 
     }
     let ctrlAddItem = () => {
-
         let input, newItem;
-
         input = uiCtrl.getInput();
-
         if (input !== "" && !isNaN(input.value) && input.value > 0) {
-
             //would be simplier to nest this in an object then pass everything in at once
             newItem = budgetController.addItem(input.type, input.description, input.value);
-
             uiCtrl.addListItem(newItem, input.type);
-
             uiCtrl.clearFields();
-
             updateBudget();
-
         }else{
             alert("please try again");
         }
-
-
     }
 
     return {
