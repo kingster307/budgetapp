@@ -12,4 +12,6 @@
 
 * Separation of concerns
 
-* comments are sloppy && intconsistant in app.js for now 
+* data modeling 
+
+* complex data structures // nested data structures 
