@@ -10,4 +10,6 @@
 
 * modular design
 
-* Separation of concerns 
+* Separation of concerns
+
+* comments are sloppy && intconsistant in app.js for now 
