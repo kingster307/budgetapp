@@ -157,9 +157,31 @@ let uiController = (() => {
         percentageLabel: '.budget__expenses--percentage',
         container: ".container",
         exspensesPercentageLabel: ".item__percentage",
+        dateLabel: ".budget__title--month",
+    };
+
+    let formatNumber = (num, type) =>{
+        let numSplit, int, dec;
+
+        num = Math.abs(num);
+        num = num.toFixed(2);
+
+        numSplit = num.split('.');
+
+       int = numSplit[0];
+       dec = numSplit[1]
+
+       if (int.length > 3){
+           int = int.substr(0, int.length-3) + "," + int.substr(int.length-3, 3);
+       }
+       return (type === "exp" ? "-" : "+") + " " + int + "." + dec;
+    };
+
+    let nodeListForEach = (list, callback) => {
+        for(let i =0; i < list.length; i++ ){
+            callback(list[i], i);
+        }
     }
-
-
     return {
         getInput: () => {
 
@@ -184,7 +206,7 @@ let uiController = (() => {
             //replace the placeholder text with actual data 
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
-            newHtml = newHtml.replace('%value%', obj.value);
+            newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
 
             //insert the HTML into the DOM 
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
@@ -210,10 +232,13 @@ let uiController = (() => {
             fields[0].focus();
         },
         displayBudget: (obj) => {
+            let type;
 
-            document.querySelector(domStrings.budgetLabel).textContent = obj.budget;
-            document.querySelector(domStrings.iccomeLabel).textContent = obj.totalInc;
-            document.querySelector(domStrings.expenseLabel).textContent = obj.totalExp;
+            obj.budget > 0 ? type = "inc" : type = "exp";
+
+            document.querySelector(domStrings.budgetLabel).textContent = formatNumber(obj.budget, type);
+            document.querySelector(domStrings.iccomeLabel).textContent = formatNumber(obj.totalInc, "inc");
+            document.querySelector(domStrings.expenseLabel).textContent = formatNumber(obj.totalExp, "exp");
             
                 
             if (obj.percentage > 0){
@@ -228,14 +253,6 @@ let uiController = (() => {
 
 
             let fields = document.querySelectorAll(domStrings.exspensesPercentageLabel)
-
-
-            let nodeListForEach = (list, callback) => {
-                for(let i =0; i < list.length; i++ ){
-                    callback(list[i], i);
-                }
-            }
-
             
             nodeListForEach(fields, (current, index)=>{
                
@@ -244,10 +261,26 @@ let uiController = (() => {
                 } else {
                     current.textContent = "---";
                 }
-               
-               
-                
             })
+        },
+
+        displayMonth: () => {
+            let now = new Date(),
+                year = now.getFullYear(),
+                month = now.getMonth(),
+                months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            document.querySelector(domStrings.dateLabel).textContent = `${months[month]} ${year}`;
+        },
+        changedType: () => {
+
+           let fields = document.querySelectorAll(`${domStrings.inputType}, ${domStrings.inputDescription}, ${domStrings.inputValue}`);
+
+            nodeListForEach(fields, (currentEl) => {
+                currentEl.classList.toggle('red-focus');
+            });
+
+            document.querySelector(domStrings.inputBtn).classList.toggle("red");
 
         },
         getDomStrings: () => {
@@ -275,6 +308,7 @@ let controller = ((budgetCtrl, uiCtrl) => {
 
         document.querySelector(DOM.container).addEventListener('click', crtlDeleteitem);
 
+        document.querySelector(DOM.inputType).addEventListener('change', uiCtrl.changedType);
 
     }
     let updateBudget = () => {
@@ -345,6 +379,7 @@ let controller = ((budgetCtrl, uiCtrl) => {
                 totalExp: 0,
                 percentage: -1,
             });
+            uiController.displayMonth();
         }
     }
 
