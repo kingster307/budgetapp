@@ -19,3 +19,5 @@
 * Node / Express webserver
 
 * gZip compression implementation 
+
+* coming in near future: persisting data feature *
