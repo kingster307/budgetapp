@@ -1,0 +1,22 @@
+{
+  "name": "starterpk",
+  "version": "1.0.0",
+  "description": "* DOM manipulation",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingster307/budgetapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kingster307/budgetapp/issues"
+  },
+  "homepage": "https://github.com/kingster307/budgetapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
