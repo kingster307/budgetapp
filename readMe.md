@@ -16,4 +16,6 @@
 
 * complex data structures // nested data structures 
 
-* Node / Express webserver 
+* Node / Express webserver
+
+* gZip compression implementation 
